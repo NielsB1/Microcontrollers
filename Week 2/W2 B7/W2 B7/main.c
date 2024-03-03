@@ -18,31 +18,30 @@ void lcd_strobe_lcd_e(void) {
 	_delay_ms(1);
 }
 
-
 void init(void) {
 	DDRC = 0xFF;
 	PORTC = 0x00;
 
-	PORTC = 0x28;
+	lcd_write_command( 0x28);
 	lcd_strobe_lcd_e();
 
-	PORTC = 0x28;
+	lcd_write_command( 0x28);
 	lcd_strobe_lcd_e();
 	
-	PORTC = 0x28;
+	lcd_write_command( 0x28);
 	lcd_strobe_lcd_e();
 	
-	PORTC = 0x80;
+	lcd_write_command( 0x80);
 	lcd_strobe_lcd_e();
 
-	PORTC = 0x00;
+	lcd_write_command( 0x00);
 	lcd_strobe_lcd_e();
-	PORTC = 0xF0;
+	lcd_write_command( 0xF0);
 	lcd_strobe_lcd_e();
 
-	PORTC = 0x00;
+	lcd_write_command( 0x00);
 	lcd_strobe_lcd_e();
-	PORTC = 0x60;
+	lcd_write_command( 0x60);
 	lcd_strobe_lcd_e();
 
 }

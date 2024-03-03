@@ -94,6 +94,8 @@ init();
 
 clear_lcd();
 
+char buffer[20];
+
 while(1){
 
 if ((PINC & BIT(0)))
@@ -107,10 +109,9 @@ if ((PINC & BIT(0)))
 		count ++;
 		
 		set_cursor(0);
-		display_text((char)count);
+		sprintf(buffer, "%d", ADCH);
+		display_text(buffer);
 
-		set_cursor(42);
-		display_text("brood");
 
 		while ((PINC & BIT(0)));
 		_delay_ms(50);
