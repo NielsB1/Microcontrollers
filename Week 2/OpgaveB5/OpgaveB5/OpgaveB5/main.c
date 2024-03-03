@@ -1,18 +1,16 @@
-
-
 #define F_CPU 8e6
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "main.h"
 
-#define LCD_E 	3
-#define LCD_RS	2
+#define LCD_E 3
+#define LCD_RS 2
 
 void lcd_strobe_lcd_e(void);
-void lcd_write_string(char *str);
 void lcd_write_data(unsigned char byte);
 void lcd_write_cmd(unsigned char byte);
+void lcd_writeLine1(char[]);
 
 void lcd_strobe_lcd_e(void) {
 	PORTC |= (1<<LCD_E);	// E high
@@ -22,7 +20,9 @@ void lcd_strobe_lcd_e(void) {
 }
 
 
-void init_lcd(){
+void init_avans()
+{
+	
 	// PORTC output mode and all low (also E and RS pin)
 	DDRC = 0xFF;
 	PORTC = 0x00;
@@ -50,11 +50,7 @@ void init_lcd(){
 	lcd_strobe_lcd_e();
 }
 
-void set_cursor(int position){
-	
-}
-
-void display_text(char *str) {
+void display_text(char *str){
 	// Het kan met een while:
 
 	// while(*str) {
@@ -66,6 +62,9 @@ void display_text(char *str) {
 		lcd_write_data(*str);
 	}
 }
+
+
+
 void lcd_write_data(unsigned char byte) {
 	// First nibble.
 	PORTC = byte;
@@ -78,11 +77,11 @@ void lcd_write_data(unsigned char byte) {
 	lcd_strobe_lcd_e();
 }
 
-void lcd_write_command(unsigned char byte)
 
+void lcd_write_command(unsigned char byte)
 {
 	// First nibble.
-	PORTC = byte;
+	PORTC = byte & 0xf0;
 	PORTC &= ~(1<<LCD_RS);
 	lcd_strobe_lcd_e();
 
@@ -91,20 +90,24 @@ void lcd_write_command(unsigned char byte)
 	PORTC &= ~(1<<LCD_RS);
 	lcd_strobe_lcd_e();
 }
+
+
 int main( void ) {
+
 	// Init I/O
 	DDRD = 0xFF;			// PORTD(7) output, PORTD(6:0) input
 
-	// Init LCD
-	init_lcd();
+	init();
 
-	// Write sample string
-	display_text("Kanker plank");
+	
+	display_text("Joe biden heehee hee bilbil");
+	
+	
 
 	// Loop forever
 	while (1) {
 		PORTD ^= (1<<7);	// Toggle PORTD.7
-		_delay_ms( 250 );
+		_delay_ms( 50 );
 	}
 
 	return 1;

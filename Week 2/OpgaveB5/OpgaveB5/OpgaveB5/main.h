@@ -1,8 +1,7 @@
+#define MAIN_H
+#ifndef MAIN_H
 
-#ifndef HEADER_FILE
-#define HEADER_FILE
-
-void init_lcd();
+void init_avans();
 void display_text(char *str);
 void set_cursor(int position);
 
