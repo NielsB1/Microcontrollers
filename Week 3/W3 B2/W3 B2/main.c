@@ -4,36 +4,29 @@
 
 #define BIT(x) (1 << (x))
 
-volatile uint8_t pulseState = 0; // 0: Low, 1: High
-volatile uint16_t pulseCounter = 0;
+volatile uint16_t delay_count = 7000;
 
-ISR(TIMER2_OVF_vect) {
-	pulseCounter++;
-	if (pulseState == 0 && pulseCounter >= 15) {
-		PORTD |= BIT(7); // Set PORTD.7 high
-		pulseState = 1;
-		pulseCounter = 0;
-		TCNT2 = 256 - ((25 * F_CPU) / (1024 * 1000)); // Load for 25ms low
-		} else if (pulseState == 1 && pulseCounter >= 25) {
-		PORTD &= ~BIT(7); // Set PORTD.7 low
-		pulseState = 0;
-		pulseCounter = 0;
-		TCNT2 = 256 - ((15 * F_CPU) / (1024 * 1000)); // Load for 15ms high
+int main(void) {
+	DDRF |= BIT(1); // Set LED as output
+	TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
+	TIMSK |= (1 << OCIE1A); // Enable CTC interrupt
+	sei(); // Enable global interrupts
+	OCR1A = delay_count; // Set initial delay value
+	TCCR1B |= ((1 << CS10) | (1 << CS11)); // Start timer at Fcpu / 64
+
+	for (;;) {
+		// You can change delay_count value dynamically here if needed
 	}
 }
 
-int main(void) {
-	DDRD |= BIT(7); // Set PORTD.7 as output
-
-	// Timer2 initialization
-	TCCR2 = (1 << CS22) | (1 << CS21) | (1 << CS20); // Start timer with prescaler 1024
-	TIMSK |= (1 << TOIE2); // Enable overflow interrupt
-
-	sei(); // Enable global interrupts
-
-	while (1) {
-		// Main loop, interrupts handle the pulses
+ISR(TIMER1_COMPA_vect) {
+	if (delay_count == 7000) {
+		delay_count = 8000;	
+	} else {
+		delay_count = 7000;
 	}
+	
+	PORTF ^= BIT(1);
 
-	return 0;
+	OCR1A = delay_count;
 }

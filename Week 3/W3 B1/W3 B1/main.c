@@ -94,32 +94,17 @@ init();
 
 clear_lcd();
 
-char buffer[20];
-
-while(1){
-
-if ((PINC & BIT(0)))
-{
-	_delay_ms(50); // Debounce delay
+	DDRD &= ~BIT(7);
+	TCCR2 = 0b00000111; // rising edge
+	TCNT2 = 0x00; // start value is 0
 	
-	// Check button state again to confirm the press
-	if ((PINC & BIT(0)))
-	{
-		
-		count ++;
-		
-		set_cursor(0);
-		sprintf(buffer, "%d", ADCH);
+	char buffer[20];
+
+	while (1) {
+		sprintf(buffer, "%d", TCNT2);
 		display_text(buffer);
-
-
-		while ((PINC & BIT(0)));
-		_delay_ms(50);
-		
+		_delay_ms(100);
 	}
-}
-
-
-return 1;
-}
+	
+	return 0;
 }
