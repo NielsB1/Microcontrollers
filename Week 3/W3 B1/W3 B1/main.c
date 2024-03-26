@@ -85,11 +85,7 @@ void lcd_write_command(unsigned char byte)
 	lcd_strobe_lcd_e();
 }
 
-static int count = 0;
-
 int main( void ) {
-DDRD = 0xFF;
-
 init();
 
 clear_lcd();
